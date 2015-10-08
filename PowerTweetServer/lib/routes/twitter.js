@@ -13,34 +13,103 @@ var T = new Twit({
     access_token_secret: process.env.Twitter_Access_Token_Secret.trim()
 });
 
-function saveToken(token) {
-    /*
-    if (!fs.existsSync("tokens")) {
-        fs.mkdirSync("tokens");
-    }
-    
-    fs.writeFileSync("tokens\\" + token.id + ".json", JSON.stringify(token), "UTF-8", function(err) {
-        console.log(err);
-    });*/
+function getSafeSearch(search) {
+    var base64 = new Buffer(search).toString('base64');
+    return base64.substring(0, base64.length - 2);
 }
 
-function getToken(token) {
-    var result = null;
-    var tokenFile = "tokens\\" + token + ".json";
+function mkDir(dir) {
+    console.log("mkDir");
+    var result = "";
+    var x = dir.split("\\");
 
-    //if (fs.existsSync(tokenFile)) {
-    //    result = JSON.parse(fs.readFileSync(tokenFile, "UTF-8"));
-    //}
-    //else {
-    result = {
-        id: generateToken(8)
-    };
-    //}
+    for (var d in x) {
+        if (result.length > 0) {
+            result = result + "\\";
+        }
+
+        result += x[d];
+
+        console.log(result);
+        if (!fs.existsSync(result)) {
+            fs.mkdirSync(result);
+        }
+    }
+}
+
+function getTokenPath(search, id) {
+    console.log("getTokenPath");
+    return "tokens\\" + getSafeSearch(search) + "\\" + id;
+}
+
+function saveToken(token) {
+    console.log("saveToken");
+    var basePath = getTokenPath(token.search, token.id);
+    mkDir(basePath);
+    fs.writeFileSync(basePath + "\\token.json", JSON.stringify(token), "UTF-8", function (err) {
+        console.log(err);
+    });
+}
+
+function saveTweets(token, data) {
+    console.log("saveTweets");
+    var basePath = getTokenPath(token.search, token.id);
+    mkDir(basePath);
+    var count = fs.readdirSync(basePath).length;
+    fs.writeFileSync(basePath + "\\" + count + ".json", JSON.stringify(data), "UTF-8", function (err) {
+        console.log(err);
+    });
+}
+
+function getToken(tokenId, search) {
+    console.log("getToken");
+    var result = null;
+    var tokenPath = getTokenPath(search, tokenId) + "\\token.json";
+
+    if (fs.existsSync(tokenPath)) {
+        result = JSON.parse(fs.readFileSync(tokenPath, "UTF-8"));
+    } else {
+        result = {
+            id: generateToken(8),
+            search: search
+        };
+    }
+
+    return result;
+}
+
+function getTweets(token, search) {
+    console.log("getTweets");
+
+    var tokenPath = getTokenPath(search, token.id);
+    var result = null;
+
+    console.log("reading dirs " + tokenPath);
+    var files = fs.readdirSync(tokenPath);
+    for (var i in files) {
+        var file = files[i];
+        console.log("reading file " + file);
+
+        if (file != "tokens.json") {
+            var json = JSON.parse(fs.readFileSync(tokenPath + "\\" + file, "UTF-8"));
+
+            if (!result) {
+                result = json;
+            } else {
+                for (var j in json.statuses) {
+                    result.statuses.push(json.statuses[j]);
+                }
+            }
+
+            console.log("items " + result.statuses.length);
+        }
+    }
 
     return result;
 }
 
 function cleanTweets(twitterResponse) {
+    console.log("cleanTweets");
     var origin = twitterResponse.statuses;
     var cleaned = [];
 
@@ -64,9 +133,9 @@ function generateToken(len) {
 function processTweets(token, data, res) {
     console.log('Processing tweets');
     token.last_id = data.search_metadata.max_id;
-    //saveToken(token);
+    saveToken(token);
     data.token = token.id;
-    //data = cleanTweets(data);
+    saveTweets(token, data);
     res.send(data);
 }
 
@@ -84,44 +153,58 @@ function getTweetsAsync(query, params) {
 
 /* GET users listing. */
 router.get('/', function callee$0$0(req, res, next) {
-    var search, token, tweetCount, queryParameters, tweets;
+    var search, token, complete, tweetCount, queryParameters, tweets, _tweets;
+
     return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
         while (1) switch (context$1$0.prev = context$1$0.next) {
             case 0:
                 search = req.query.q;
                 token = req.query.token;
+                complete = req.query.complete;
                 tweetCount = req.query.count || 10;
                 queryParameters = {
                     q: search,
                     count: tweetCount
                 };
-                token = getToken(token);
+                token = getToken(token, search);
 
                 queryParameters.since_id = token.last_id;
 
-                context$1$0.prev = 6;
-                context$1$0.next = 9;
-                return regeneratorRuntime.awrap(getTweetsAsync("search/tweets", queryParameters));
+                if (!(complete == "1")) {
+                    context$1$0.next = 12;
+                    break;
+                }
 
-            case 9:
-                tweets = context$1$0.sent;
+                tweets = getTweets(token, search);
 
-                processTweets(token, tweets, res);
-                context$1$0.next = 17;
+                res.send(tweets);
+                context$1$0.next = 23;
                 break;
 
-            case 13:
-                context$1$0.prev = 13;
-                context$1$0.t0 = context$1$0['catch'](6);
+            case 12:
+                context$1$0.prev = 12;
+                context$1$0.next = 15;
+                return regeneratorRuntime.awrap(getTweetsAsync("search/tweets", queryParameters));
+
+            case 15:
+                _tweets = context$1$0.sent;
+
+                processTweets(token, _tweets, res);
+                context$1$0.next = 23;
+                break;
+
+            case 19:
+                context$1$0.prev = 19;
+                context$1$0.t0 = context$1$0['catch'](12);
 
                 console.log(context$1$0.t0);
                 res.status(500).send({ error: context$1$0.t0 });
 
-            case 17:
+            case 23:
             case 'end':
                 return context$1$0.stop();
         }
-    }, null, this, [[6, 13]]);
+    }, null, this, [[12, 19]]);
 });
 
 module.exports = router;
