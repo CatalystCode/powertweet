@@ -8,7 +8,7 @@ var cors = require('cors');
 
 var routes = require('./routes/index');
 var twitter = require('./routes/twitter');
-
+var onenote = require('./routes/onenote');
 var app = express();
 
 // view engine setup
@@ -27,6 +27,7 @@ app.use(cors());
 
 app.use('/', routes);
 app.use('/twitter', twitter);
+app.use('/onenote', onenote);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

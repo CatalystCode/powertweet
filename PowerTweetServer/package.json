@@ -16,7 +16,9 @@
     "morgan": "~1.6.1",
     "oauth": "^0.9.14",
     "serve-favicon": "~2.3.0",
-    "twit": "^2.1.0"
+    "twit": "^2.1.0",
+    "underscore": "^1.6.0",
+    "request": "^2.34.0"
   },
   "devDependencies": {
     "grunt": "^0.4.5"

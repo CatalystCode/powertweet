@@ -16,6 +16,9 @@
     <Environment>Twitter_Consumer_Key=HoXOakpnxhgerdsYfZ8a2KT47
 Twitter_Consumer_Secret=cYjYzu2YoqM7j4OH9X4XjruGPtAdXVII19AbEMvfvx6ZaCgC3m
 Twitter_Access_Token=10373272-YPLTG5OMKawU3YhZPca5UWbEptXWUnKL7bO6qQvex
+clientId= 000000004C168D34
+clientSecret=XGoBKSP2qoUvDBRgPadW52S-qSi-YkXR
+redirectUrl=http://partnercatalysthack-powertwitter.azurewebsites.net/onenote
 Twitter_Access_Token_Secret=kg0coNl4gGqyJt0qa0JyN4qr4qkzFpwL5PhN9Eq6wfzLY</Environment>
     <NodejsPort>
     </NodejsPort>
@@ -28,9 +31,15 @@ Twitter_Access_Token_Secret=kg0coNl4gGqyJt0qa0JyN4qr4qkzFpwL5PhN9Eq6wfzLY</Envir
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
     <Compile Include="src\app.js" />
+    <Compile Include="src\create-examples.js" />
+    <Compile Include="src\liveconnect-client.js" />
     <Compile Include="src\routes\index.js" />
+    <Compile Include="src\routes\onenote.js" />
     <Compile Include="src\routes\twitter.js" />
     <Content Include="bin\www" />
+    <Content Include="lib\views\callback.jade" />
+    <Content Include="lib\views\onenote.jade" />
+    <Content Include="lib\views\result.jade" />
     <Content Include="package.json" />
     <Content Include="lib\views\error.jade" />
     <Content Include="lib\views\index.jade" />

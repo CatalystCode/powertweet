@@ -5,13 +5,13 @@ var liveConnect = require('../liveconnect-client');
 var createExamples = require('../create-examples');
 
 /* GET Index page */
-router.get('/onenote', function (req, res) {
+router.get('/', function (req, res) {
 	var authUrl = liveConnect.getAuthUrl();
-	res.render('index', { title: 'PowerTweet!', authUrl: authUrl });
+	res.render('onenote', { title: 'PowerTweet test!', authUrl: authUrl });
 });
 
 /* POST Create example request */
-router.post('/onenote', function (req, res) {
+router.post('/', function (req, res) {
 	var accessToken = req.cookies['access_token'];
 	var exampleType = req.body['submit'];
 	
@@ -54,10 +54,6 @@ router.post('/onenote', function (req, res) {
 			createExamples.createPageWithSavedTweets(accessToken, createResultCallback);
 			break;
 	}
-});
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
 });
 
 module.exports = router;
