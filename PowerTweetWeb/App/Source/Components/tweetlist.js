@@ -1,10 +1,15 @@
 var React = require('react'),
+    MasonryMixin = require('react-masonry-mixin')(React),
     Tweet = require('./tweet'),
     SetIntervalMixin = require('./../Mixin/setinterval'),
     TweetListComponent;
 
+var masonryOptions = {
+    transitionDuration: 0
+};
+
 TweetListComponent = React.createClass({
-    mixins: [SetIntervalMixin],
+    mixins: [SetIntervalMixin, MasonryMixin('masonryContainer', masonryOptions)],
 
     propTypes: {
         hashtag: React.PropTypes.string.isRequired
@@ -13,7 +18,8 @@ TweetListComponent = React.createClass({
     getInitialState() {
         return {
             twitterUrl: null,
-            tweets: []
+            tweets: [],
+            dismissedTweets: []
         };
     },
 
@@ -41,15 +47,25 @@ TweetListComponent = React.createClass({
             error: (xhr, status, err) => {
                 console.error(this.state.twitterUrl, status, err.toString());
             }
-        })
+        });
+    },
+
+    dismissTweet: function (key) {
+        let dismissedTweets = this.state.dismissedTweets;
+        dismissedTweets.push(key);
+        this.setState({dismissedTweets: dismissedTweets});
     },
 
     render () {
         let tweets = this.state.tweets || [];
+        let dismissedTweets = this.state.dismissedTweets;
         let renderedTweets = [];
 
         for (let i = 0; i < tweets.length; i = i + 1) {
-            renderedTweets.push(<Tweet key={tweets[i].id} tweet={tweets[i]} />);
+            if (dismissedTweets.indexOf(tweets[i].id) === -1) {
+                console.log(dismissedTweets, tweets[i].id);
+                renderedTweets.push(<Tweet tid={tweets[i].id} key={tweets[i].id} tweet={tweets[i]} dismiss={this.dismissTweet} />);
+            };
         }
 
         if (!renderedTweets || renderedTweets.length === 0) {
@@ -61,7 +77,7 @@ TweetListComponent = React.createClass({
                 <div className="tweetlist-header">
                     <h1>Tweets for "{this.props.hashtag}"</h1>
                 </div>
-                <div>
+                <div ref="masonryContainer">
                     {renderedTweets}
                 </div>
             </div>

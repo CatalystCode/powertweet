@@ -67,8 +67,14 @@
 
 .ms-PersonaCard {
     width: 500px;
-    float: left;
+    height: 300px;
     margin: 20px;
+    max-width: 450px;
+    overflow: auto;
+}
+
+.ms-PersonaCard-persona {
+    height: 104px;
 }
 
 .ms-PersonaCard .tweet-text {

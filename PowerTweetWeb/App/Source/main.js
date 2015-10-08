@@ -4,11 +4,10 @@
     function initialize() {
         $(document).ready(function () {
             let React = require('react');
-            let ReactDOM = require('react-dom');
             let PowerTweet = require('./components/powertweet.js');
 
             app.initialize();
-            ReactDOM.render(<PowerTweet />, document.getElementById('content-main'));
+            React.render(<PowerTweet />, document.getElementById('content-main'));
         });
     }
 
