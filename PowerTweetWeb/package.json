@@ -14,7 +14,8 @@
     "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-watch": "^0.6.1",
     "react": "^0.14.0",
-    "react-dom": "^0.14.0"
+    "react-dom": "^0.14.0",
+    "react-masonry-mixin": "^2.0.0"
   },
   "author": "",
   "license": "MIT"
