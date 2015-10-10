@@ -4,7 +4,7 @@ Twitter, but inside PowerPoint: This is the source code for an (unreleased) litt
 ![Gif](https://raw.githubusercontent.com/CatalystCode/powertweet/master/powertweet.gif)
 
 ### PowerTweetWeb
-This is the add-in itself - written in ES6, the code in `PowerTweetWeb/Source` is compiled down to ES5 using Babel. Visual Studio should handle this for you, but be sure to run `npm install` inside `PowerTweetWeb` if Babel fails.
+This is the add-in itself - written in ES6, the code in `PowerTweetWeb/Source` is compiled down to ES5 using Babel. Visual Studio should handle this for you, but be sure to run `npm install` inside `PowerTweetWeb` if Babel fails. To make things less horrible during development, we used React.JS for components.
 
 ### PowerTweetServer
 Twitter makes it really hard (read: impossible) to call their search API from a client (aka a script running locally), meaning that we needed to create a little "man in the middle" script that calls Twitter for you. It's a small Node.js server (nothing fancy and certainly not fit for production), but it gets the job done. It too is compiled down to ES5, so be sure to watch out for our usage of `async/await`.

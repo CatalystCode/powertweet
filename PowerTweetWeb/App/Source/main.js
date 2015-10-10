@@ -16,7 +16,8 @@
         // The initialize function must be run each time a new page is loaded
         Office.initialize = (reason) => initialize();
     } else {
-        // We're probably *not* running in Office
+        // We're probably *not* running in Office, but let's still start the app
+        // If you want to run/debug in Edge/Chrome, you totally can!
         initialize();
     }
 })();
